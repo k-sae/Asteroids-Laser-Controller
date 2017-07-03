@@ -4,6 +4,9 @@
       <root url="jar://$PROJECT_DIR$/libs/opencv-320.jar!/" />
     </CLASSES>
     <JAVADOC />
+    <NATIVE>
+      <root url="file://F:/opencv/build/java/x64" />
+    </NATIVE>
     <SOURCES>
       <root url="jar://$PROJECT_DIR$/libs/opencv-320.jar!/" />
     </SOURCES>

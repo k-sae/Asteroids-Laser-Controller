@@ -72,7 +72,7 @@ public class AsteroidsController implements OnLaserDetectionListener {
     {
         String s = System.getProperty("os.name").toLowerCase();
         if (s.contains("lin")) return "gameBin/linux/Asteroids";
-        else return "gameBin/windows/Asteroids.exe";
+        else return "gameBin/win/Asteroids.exe";
     }
     // TODO #belal #1
     //  make sure the wait between key events so game be able to capture keys
