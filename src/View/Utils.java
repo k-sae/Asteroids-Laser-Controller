@@ -9,7 +9,8 @@ import org.opencv.core.Mat;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 /* Disclaimer:
- *              This class not owned by our team copyrights below
+ *              This class not owned by our team
+ *              copyrights below
  */
 
 

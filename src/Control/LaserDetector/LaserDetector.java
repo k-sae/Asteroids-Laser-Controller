@@ -15,6 +15,8 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by kareem on 7/2/17.
  */
+//TODO #kareem
+    // provide a setters for Laser type (shiny red , normal red , green , etc)
 public class LaserDetector {
     private ScheduledExecutorService timer;
     private VideoCapture capture;
@@ -108,6 +110,9 @@ public class LaserDetector {
         }
         return matOfPoint;
     }
+
+    //Listeners down here Just ignore them :)
+
     public void setOnLaserDetectionListeners(OnLaserDetectionListener onLaserDetectionListener)
     {
         onLaserDetectionListeners.add(onLaserDetectionListener);

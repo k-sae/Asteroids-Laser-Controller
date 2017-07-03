@@ -1,5 +1,6 @@
 package View;
 
+import Control.AsteroidsController;
 import Control.LaserDetector.LaserDetector;
 import Control.LaserDetector.OnFrameProcessedListener;
 import javafx.application.Application;
@@ -9,10 +10,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import org.opencv.core.*;
+import org.opencv.videoio.VideoWriter;
 
 /**
  * Created by kareem on 7/1/17.
  */
+//TODO use video writer to export mask
 public class Main extends Application implements OnFrameProcessedListener{
     ImageView mask;
     ImageView frame;
@@ -29,10 +32,12 @@ public class Main extends Application implements OnFrameProcessedListener{
         frame = new ImageView();
         root.setLeft(frame);
         primaryStage.setTitle("Capture Color");
-        startLaserDetection();
         primaryStage.setScene(new Scene(root, 900, 400));
+        startLaserDetection();
+        startGameSync();
         primaryStage.show();
     }
+    //overriding stop to close all Active threads
     @Override
     public void stop() throws Exception {
         super.stop();
@@ -46,12 +51,19 @@ public class Main extends Application implements OnFrameProcessedListener{
     private void startLaserDetection()
     {
        laserDetector = new LaserDetector();
+       //setting listeners
        laserDetector.setOnFrameProcessedListeners(this);
        laserDetector.startDetecting();
     }
-
     @Override
     public void onFinish(Mat frame) {
+        //For Debugging
         updateImageView(this.frame, frame);
+    }
+
+    private void startGameSync()
+    {
+        AsteroidsController asteroidsController = new AsteroidsController(laserDetector);
+        asteroidsController.start();
     }
 }
