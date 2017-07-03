@@ -92,7 +92,7 @@ public class AsteroidsController implements OnLaserDetectionListener {
 //            robot.keyRelease(KeyEvent.VK_1);
         //etc..
         //lastly
-        alterKeyCombination(laserLocation, gameState.getPlayerLocation());
+        alterKeyCombination(laserLocation, gameState.getPlayerLocation(),gameState.getPlayerAngel());
     }
 
     private void unifyResolution(Point point)
@@ -114,7 +114,7 @@ public class AsteroidsController implements OnLaserDetectionListener {
      * @param laserLocation
      * @param playerLocation
      */
-    private void alterKeyCombination(Point laserLocation, Point playerLocation)
+    private void alterKeyCombination(Point laserLocation, Point playerLocation , double angel)
     {
         //tips:
         //  try not to create new instances only if needed

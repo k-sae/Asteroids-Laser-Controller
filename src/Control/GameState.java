@@ -11,11 +11,13 @@ import org.opencv.core.Point;
 public class GameState {
     private Point playerLocation;  // u may prefer to use this as a Location class with x, y axis up to u :)
     private int gameType;
+    private double playerAngel;
+
+
     //.. etc
 
 
-    public void parse(String gameStates_str)
-    {
+    public void parse(String gameStates_str) {
         //TODO #belal #3
         // like json parsing
         // may u can use Gson but it think it will be slower its ur call
@@ -38,4 +40,13 @@ public class GameState {
     public void setGameType(int gameType) {
         this.gameType = gameType;
     }
+
+    public double getPlayerAngel() {
+        return playerAngel;
+    }
+
+    public void setPlayerAngel(double angel) {
+        this.playerAngel = angel;
+    }
+
 }
