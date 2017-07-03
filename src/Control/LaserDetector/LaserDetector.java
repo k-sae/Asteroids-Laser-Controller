@@ -70,7 +70,7 @@ public class LaserDetector {
 
             } catch (Exception e) {
                 // log the error
-                System.err.println("Exception during the image elaboration: " + e);
+                e.printStackTrace();
             }
         }
 
@@ -89,10 +89,12 @@ public class LaserDetector {
         if (matOfPoints.size() > 0) {
 
             float[] radius = new float[1];
-            Imgproc.minEnclosingCircle(new MatOfPoint2f(matOfPoints.get(maxPoint(matOfPoints)).toArray()), laserCenter,radius);
+            Point[] matOfPoint = matOfPoints.get(maxPoint(matOfPoints)).toArray();
+            Imgproc.minEnclosingCircle(new MatOfPoint2f(matOfPoint), laserCenter,radius);
             //Trigger Listener up here
-            triggerLaserDetectionFrame(laserCenter);
             Imgproc.circle(frame, laserCenter, 7, new Scalar(255, 0, 0), 2);
+            triggerLaserDetectionFrame(laserCenter);
+
         }
         triggerProcessingListeners(onFrameProcessedListeners, frame);
         triggerProcessingListeners(onMaskProcessedListeners, mask);
@@ -122,6 +124,10 @@ public class LaserDetector {
     {
         onFrameProcessedListeners.add(onFrameProcessedListener);
     }
+    public void removeOnFrameProcessedListeners(OnFrameProcessedListener onFrameProcessedListener)
+    {
+        onFrameProcessedListeners.remove(onFrameProcessedListener);
+    }
     public void setOnMaskProcessedListeners(OnMaskProcessedListener onMaskProcessedListener)
     {
         onMaskProcessedListeners.add(onMaskProcessedListener);
@@ -129,8 +135,9 @@ public class LaserDetector {
 
     private void triggerProcessingListeners(List<?> processingListeners, Mat mat)
     {
-        for (ProcessingListener processingListener: (List<ProcessingListener>) processingListeners
-             ) {
+        List<ProcessingListener> processingListeners1 = (List<ProcessingListener>) processingListeners;
+        for (int i = 0; i < (processingListeners1).size(); i++) {
+            ProcessingListener processingListener = processingListeners1.get(i);
             processingListener.onFinish(mat);
         }
     }

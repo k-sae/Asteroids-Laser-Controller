@@ -1,7 +1,9 @@
 package Control;
 
 import Control.LaserDetector.LaserDetector;
+import Control.LaserDetector.OnFrameProcessedListener;
 import Control.LaserDetector.OnLaserDetectionListener;
+import org.opencv.core.Mat;
 import org.opencv.core.Point;
 
 import java.awt.*;
@@ -13,7 +15,7 @@ import java.util.ArrayList;
 /**
  * Created by kareem on 7/2/17.
  */
-public class AsteroidsController implements OnLaserDetectionListener {
+public class AsteroidsController implements OnLaserDetectionListener, OnFrameProcessedListener {
 
     //WARNING!!!
     //this class working with 2 threads concurrently beside the Ui thread So make sure to Take Care of every interact
@@ -21,10 +23,20 @@ public class AsteroidsController implements OnLaserDetectionListener {
     private Robot robot;
     private GameState gameState;
     private Point laserLocation;
+
+    //we r putting assumption that the game wil be full screen on our laptops for now
+    //change it later
+    private Point screenCoordinates;
+    private Point screenCameraRatio;
     public  AsteroidsController(LaserDetector laserDetector)
     {
         this.laserDetector = laserDetector;
+        laserDetector.setOnFrameProcessedListeners(this);
         gameState = new GameState();
+        //TODO #later
+        //          any one find the most suitable way to get game coordinates
+        screenCoordinates = new Point(1366,768);
+        screenCameraRatio = new Point(0,0);
         try {
             robot = new Robot();
         } catch (AWTException e) {
@@ -65,7 +77,7 @@ public class AsteroidsController implements OnLaserDetectionListener {
     @Override
     public void onDetection(Point point) {
         unifyResolution(point);
-        laserLocation = point;
+        alterKeyCombination(point, gameState.getPlayerLocation(),gameState.getPlayerAngel());
     }
 
     private String getGameBin()
@@ -92,18 +104,13 @@ public class AsteroidsController implements OnLaserDetectionListener {
 //            robot.keyRelease(KeyEvent.VK_1);
         //etc..
         //lastly
-        alterKeyCombination(laserLocation, gameState.getPlayerLocation(),gameState.getPlayerAngel());
+
     }
 
     private void unifyResolution(Point point)
     {
-        //TODO #belal
-        //change this to match the the resolution of game
-        // u may leave to me if u want
-        //Tips:
-        //     1- dont create a new instance for better performance
-        //     2- HF :D
-
+        point.x = point.x * screenCameraRatio.x - screenCoordinates.x/2;
+        point.y = point.y * screenCameraRatio.y - screenCoordinates.y /2;
     }
 
     //TODO #thirdMember
@@ -120,6 +127,16 @@ public class AsteroidsController implements OnLaserDetectionListener {
         //  try not to create new instances only if needed
         //  this function will be called a lot and may cause memory leak on linux
         //  don't delete comments
+        System.out.println(laserLocation.x + " | " + laserLocation.y);
     }
 
+    @Override
+    public void onFinish(Mat frame) {
+        if (frame.height() != 0)
+        {
+            screenCameraRatio.x = screenCoordinates.x / frame.width();
+            screenCameraRatio.y = screenCoordinates.y / frame.height();
+            laserDetector.removeOnFrameProcessedListeners(this);
+        }
+    }
 }
