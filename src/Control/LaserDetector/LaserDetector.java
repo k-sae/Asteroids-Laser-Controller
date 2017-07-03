@@ -23,7 +23,12 @@ public class LaserDetector {
     private List<OnLaserDetectionListener> onLaserDetectionListeners;
     private List<OnFrameProcessedListener> onFrameProcessedListeners;
     private List<OnMaskProcessedListener> onMaskProcessedListeners;
-
+    private Point laserCenter = new Point();
+    private Mat mask = new Mat();
+    private Mat hsv = new Mat();
+    private Mat heir = new Mat();
+    final List<MatOfPoint> matOfPoints = new ArrayList<>();
+    Mat frame = new Mat();
     public LaserDetector() {
         onFrameProcessedListeners = new ArrayList<>();
         onMaskProcessedListeners = new ArrayList<>();
@@ -38,9 +43,8 @@ public class LaserDetector {
             @Override
             public void run() {
                 // effectively grab and process a single frame
-                Mat frame = grabFrame();
+                grabFrame();
                 // convert and show the frame
-                Image imageToShow = Utils.mat2Image(frame);
                 //TODO trigger listener up here
             }
         };
@@ -49,9 +53,9 @@ public class LaserDetector {
         this.timer.scheduleAtFixedRate(frameGrabber, 0, 20, TimeUnit.MILLISECONDS);
     }
 
-    private Mat grabFrame() {
+    private void grabFrame() {
         // init everything
-        Mat frame = new Mat();
+
 
         // check if the capture is open
         if (this.capture.isOpened()) {
@@ -61,7 +65,7 @@ public class LaserDetector {
 
                 // if the frame is not empty, process it
                 if (!frame.empty()){
-                    trackLaser(frame).assignTo(frame);
+                    trackLaser();
                 }
 
             } catch (Exception e) {
@@ -70,32 +74,29 @@ public class LaserDetector {
             }
         }
 
-        return frame;
     }
-    private Mat trackLaser(Mat frame)
+    private void trackLaser()
     {
-        Mat mask = new Mat();
-        Mat hsv = new Mat();
+
         Imgproc.cvtColor(frame,hsv , Imgproc.COLOR_BGR2HSV);
         //shiny RED Color
         Scalar lowerScale = new Scalar(0, 0, 255);
         Scalar upperScale = new Scalar(255, 255, 255);
+
         Core.inRange(hsv, lowerScale, upperScale, mask);
-        final List<MatOfPoint> matOfPoints = new ArrayList<>();
-        Imgproc.findContours(mask, matOfPoints, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+        matOfPoints.clear();
+        Imgproc.findContours(mask, matOfPoints, heir , Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
         if (matOfPoints.size() > 0) {
-//            Core.MinMaxLocResult minMaxLocResult = Core.minMaxLoc(mask);
-            Point center = new Point();
+
             float[] radius = new float[1];
-            Imgproc.minEnclosingCircle(new MatOfPoint2f(matOfPoints.get(maxPoint(matOfPoints)).toArray()),center,radius);
-//            System.out.println(center.x + ":" + center.y);
+            Imgproc.minEnclosingCircle(new MatOfPoint2f(matOfPoints.get(maxPoint(matOfPoints)).toArray()), laserCenter,radius);
             //Trigger Listener up here
-            triggerLaserDetectionFrame(center);
-            Imgproc.circle(frame,center , 7, new Scalar(255, 0, 0), 2);
+            triggerLaserDetectionFrame(laserCenter);
+            Imgproc.circle(frame, laserCenter, 7, new Scalar(255, 0, 0), 2);
         }
         triggerProcessingListeners(onFrameProcessedListeners, frame);
         triggerProcessingListeners(onMaskProcessedListeners, mask);
-        return frame ;
+
     }
     private int maxPoint(List<MatOfPoint> matOfPoints)
     {

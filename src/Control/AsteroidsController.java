@@ -51,7 +51,6 @@ public class AsteroidsController implements OnLaserDetectionListener {
              Process process = processBuilder.start();
              BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream()));
              String line;
-             //start listening for wget
              while ((line = input.readLine()) != null) {
                 AnalyzeGameStates(line);
              }
