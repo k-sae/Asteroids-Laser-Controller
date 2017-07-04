@@ -96,6 +96,7 @@ public class AsteroidsController implements OnLaserDetectionListener, OnFramePro
     private void AnalyzeGameStates(String line)
     {
         //implement this function
+       // System.out.println(line);
         gameState.parse(line);
         //pseudo code
         // if game type = menu
@@ -127,7 +128,12 @@ public class AsteroidsController implements OnLaserDetectionListener, OnFramePro
         //  try not to create new instances only if needed
         //  this function will be called a lot and may cause memory leak on linux
         //  don't delete comments
-        System.out.println(laserLocation.x + " | " + laserLocation.y);
+     //   System.out.println(laserLocation.x + " | " + laserLocation.y);
+        playerLocation = new Point();
+        playerLocation.x=0;
+        playerLocation.y=0;
+        System.out.println(new MovesPredictor().horizontal_xLineAngle(playerLocation,laserLocation)+"  |   " +new MovesPredictor().lengthBetween2Points(playerLocation,laserLocation));
+
     }
 
     @Override
