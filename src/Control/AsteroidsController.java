@@ -46,8 +46,8 @@ public class AsteroidsController implements OnLaserDetectionListener, OnFramePro
             new Thread(() -> {
                 robot.delay(10000);
                 while (true) {
-                    robot.keyPress(KeyEvent.VK_W);
-                    robot.keyPress(KeyEvent.VK_SPACE);
+//                    robot.keyPress(KeyEvent.VK_W);
+//                    robot.keyPress(KeyEvent.VK_SPACE);
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
@@ -66,6 +66,8 @@ public class AsteroidsController implements OnLaserDetectionListener, OnFramePro
             public void releaseAll() {
                 robot.keyRelease(KeyEvent.VK_A);
                 robot.keyRelease(KeyEvent.VK_D);
+                robot.keyRelease(KeyEvent.VK_W);
+                robot.keyRelease(KeyEvent.VK_SPACE);
             }
         };
         keysReleaser.start();
@@ -158,6 +160,8 @@ public class AsteroidsController implements OnLaserDetectionListener, OnFramePro
         if (MovesPredictor.checkAngles(this.movesPredictor.fixAngle(gameState.getPlayerAngle() -180 ),movesPredictor.horizontal_xLineAngle(gameState.getPlayerLocation(),laserLocation))){
           //  robot.keyPress(KeyEvent.VK_SPACE);
           //  robot.keyRelease(KeyEvent.VK_SPACE);
+            robot.keyPress(KeyEvent.VK_W);
+            robot.keyPress(KeyEvent.VK_SPACE);
           if (movesPredictor.fixAngle(gameState.getPlayerAngle() -180)< movesPredictor.horizontal_xLineAngle(gameState.getPlayerLocation(),laserLocation))
             robot.keyPress(KeyEvent.VK_A);
             else
