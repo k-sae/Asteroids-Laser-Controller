@@ -25,7 +25,7 @@ public class AsteroidsController implements OnLaserDetectionListener, OnFramePro
     private GameState gameState;
     private Point laserLocation;
     private MovesPredictor movesPredictor;
-
+    private KeysReleaser keysReleaser;
     //we r putting assumption that the game wil be full screen on our laptops for now
     //change it later
     private Point screenCoordinates;
@@ -40,29 +40,35 @@ public class AsteroidsController implements OnLaserDetectionListener, OnFramePro
         //          any one find the most suitable way to get game coordinates
         screenCoordinates = new Point(1366,768);
         screenCameraRatio = new Point(0,0);
+
         try {
             robot = new Robot();
-            new Thread()
-            {
-                public void run() {
-
-                    while (true) {
-//                        robot.keyPress(KeyEvent.VK_W);
-//                        robot.keyPress(KeyEvent.VK_SPACE);
-//                        try {
-//                            sleep(600);
-//                        } catch (InterruptedException e) {
-//                            e.printStackTrace();
-//                        }
+            new Thread(() -> {
+                robot.delay(10000);
+                while (true) {
+                    robot.keyPress(KeyEvent.VK_W);
+                    robot.keyPress(KeyEvent.VK_SPACE);
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
 //                        robot.keyRelease(KeyEvent.VK_SPACE);
 //                        robot.keyRelease(KeyEvent.VK_W);
 
-                    }
                 }
-            }.start();
+            }).start();
         } catch (AWTException e) {
             e.printStackTrace();
         }
+        keysReleaser = new KeysReleaser() {
+            @Override
+            public void releaseAll() {
+                robot.keyRelease(KeyEvent.VK_A);
+                robot.keyRelease(KeyEvent.VK_D);
+            }
+        };
+        keysReleaser.start();
     }
 
     public void start()
@@ -145,25 +151,24 @@ public class AsteroidsController implements OnLaserDetectionListener, OnFramePro
     private void alterKeyCombination(Point laserLocation)
     {
         //tips:
-        //  try not to create new instances only if needed
-        //  this function will be called a lot and may cause memory leak on linux
-        //  don't delete comments
-          //  System.out.println(this.movesPredictor.horizontal_xLineAngle(gameState.getPlayerLocation(),laserLocation)+"  |   " +this.movesPredictor.fixAngle(gameState.getPlayerAngle()) );
-        while (new  MovesPredictor().checkAngles(this.movesPredictor.fixAngle(gameState.getPlayerAngle()),this.movesPredictor.horizontal_xLineAngle(gameState.getPlayerLocation(),laserLocation))){
+//        //  try not to create new instances only if needed
+//        //  this function will be called a lot and may cause memory leak on linux
+//        //  don't delete comments
+//          //  System.out.println(this.movesPredictor.horizontal_xLineAngle(gameState.getPlayerLocation(),laserLocation)+"  |   " +this.movesPredictor.fixAngle(gameState.getPlayerAngle()) );
+        if (MovesPredictor.checkAngles(this.movesPredictor.fixAngle(gameState.getPlayerAngle() -180 ),movesPredictor.horizontal_xLineAngle(gameState.getPlayerLocation(),laserLocation))){
           //  robot.keyPress(KeyEvent.VK_SPACE);
           //  robot.keyRelease(KeyEvent.VK_SPACE);
-          if (this.movesPredictor.fixAngle(gameState.getPlayerAngle())<    this.movesPredictor.horizontal_xLineAngle(gameState.getPlayerLocation(),laserLocation))
+          if (movesPredictor.fixAngle(gameState.getPlayerAngle() -180)< movesPredictor.horizontal_xLineAngle(gameState.getPlayerLocation(),laserLocation))
             robot.keyPress(KeyEvent.VK_A);
             else
               robot.keyPress(KeyEvent.VK_D);
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            keysReleaser.extend();
         }
-        robot.keyRelease(KeyEvent.VK_A);
-        robot.keyRelease(KeyEvent.VK_D);
+        else
+        {
+            robot.keyRelease(KeyEvent.VK_A);
+            robot.keyRelease(KeyEvent.VK_D);
+        }
 //        robot.keyPress(KeyEvent.VK_W);
 //        robot.keyPress(KeyEvent.VK_SPACE);
 //        try {
@@ -172,6 +177,7 @@ public class AsteroidsController implements OnLaserDetectionListener, OnFramePro
 //            e.printStackTrace();
 //        }
 //        robot.keyRelease(KeyEvent.VK_W);
+
     }
 
     @Override

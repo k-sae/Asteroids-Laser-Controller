@@ -3,6 +3,7 @@ package View;
 import Control.AsteroidsController;
 import Control.LaserDetector.LaserDetector;
 import Control.LaserDetector.OnFrameProcessedListener;
+import Control.MovesPredictor;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -22,8 +23,6 @@ public class Main extends Application implements OnFrameProcessedListener{
     LaserDetector laserDetector;
     public static void main(String[] args){
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-        Mat mat = Mat.eye(3, 3, CvType.CV_8UC1);
-        System.out.println("mat = \n" + mat.dump());
         launch(args);
     }
     @Override

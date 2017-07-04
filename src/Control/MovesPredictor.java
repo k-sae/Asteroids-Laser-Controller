@@ -72,18 +72,6 @@ public class MovesPredictor {
 
 
         //inastroid game we consider the third  is the first
-        if (angle >= 0 && angle < 90)
-            angle += 180;
-        else if (angle >= 90 && angle < 180)
-            angle += 180;
-
-        else if (angle >= 180 && angle < 270)
-            angle -= 180;
-
-        else if (angle >= 270 && angle < 360)
-            angle -= 180;
-
-
 
             return angle;
 
@@ -93,7 +81,7 @@ public class MovesPredictor {
 
 
 
-    public boolean checkAngles(double fstAngle , double secAngle){
+    public static boolean checkAngles(double fstAngle , double secAngle){
         if (fstAngle>secAngle && ((fstAngle-secAngle)<15 ||360-fstAngle+secAngle<15))
             return false;
 
