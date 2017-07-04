@@ -66,7 +66,7 @@ public class MovesPredictor {
         return Math.sqrt(Math.pow(fstPoint.x - secPoint.x, 2) + Math.pow(fstPoint.y - secPoint.y, 2));
     }
 
-    public double fixAngle(double angle) {
+    public static double fixAngle(double angle) {
 
         angle = (angle < 0) ? -1 * (((-1) * angle) % 360)+360 : angle % 360;
 

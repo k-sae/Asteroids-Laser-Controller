@@ -47,15 +47,15 @@ public class AsteroidsController implements OnLaserDetectionListener, OnFramePro
                 public void run() {
 
                     while (true) {
-                        robot.keyPress(KeyEvent.VK_W);
-                        robot.keyPress(KeyEvent.VK_SPACE);
-                        try {
-                            sleep(600);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        robot.keyRelease(KeyEvent.VK_SPACE);
-                        robot.keyRelease(KeyEvent.VK_W);
+//                        robot.keyPress(KeyEvent.VK_W);
+//                        robot.keyPress(KeyEvent.VK_SPACE);
+//                        try {
+//                            sleep(600);
+//                        } catch (InterruptedException e) {
+//                            e.printStackTrace();
+//                        }
+//                        robot.keyRelease(KeyEvent.VK_SPACE);
+//                        robot.keyRelease(KeyEvent.VK_W);
 
                     }
                 }
@@ -132,7 +132,7 @@ public class AsteroidsController implements OnLaserDetectionListener, OnFramePro
     private void unifyResolution(Point point)
     {
         point.x = point.x * screenCameraRatio.x - screenCoordinates.x/2;
-        point.y = point.y * screenCameraRatio.y - screenCoordinates.y /2;
+        point.y =  screenCoordinates.y /2 -  point.y * screenCameraRatio.y;
     }
 
     //TODO #thirdMember
@@ -174,8 +174,6 @@ public class AsteroidsController implements OnLaserDetectionListener, OnFramePro
 //            e.printStackTrace();
 //        }
 //        robot.keyRelease(KeyEvent.VK_W);
-
-
     }
 
     @Override
