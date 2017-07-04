@@ -7,6 +7,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.Point;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -77,7 +78,7 @@ public class AsteroidsController implements OnLaserDetectionListener, OnFramePro
     @Override
     public void onDetection(Point point) {
         unifyResolution(point);
-        alterKeyCombination(point, gameState.getPlayerLocation(),gameState.getPlayerAngel());
+        alterKeyCombination(point);
     }
 
     private String getGameBin()
@@ -120,19 +121,42 @@ public class AsteroidsController implements OnLaserDetectionListener, OnFramePro
      * this function figures out the suitable key combinations to make the spaceship reach its location
      *
      * @param laserLocation
-     * @param playerLocation
      */
-    private void alterKeyCombination(Point laserLocation, Point playerLocation , double angel)
+    private void alterKeyCombination(Point laserLocation)
     {
         //tips:
         //  try not to create new instances only if needed
         //  this function will be called a lot and may cause memory leak on linux
         //  don't delete comments
-     //   System.out.println(laserLocation.x + " | " + laserLocation.y);
-        playerLocation = new Point();
-        playerLocation.x=0;
-        playerLocation.y=0;
-        System.out.println(new MovesPredictor().horizontal_xLineAngle(playerLocation,laserLocation)+"  |   " +new MovesPredictor().lengthBetween2Points(playerLocation,laserLocation));
+
+      //  System.out.println(gameState.getPlayerLocation().x + " | " + gameState.getPlayerLocation().y + ", " + gameState.getPlayerAngle());
+      //  System.out.println(new MovesPredictor().horizontal_xLineAngle(gameState.getPlayerLocation(),laserLocation)+"  |   " +new MovesPredictor().lengthBetween2Points(gameState.getPlayerLocation(),laserLocation));
+        while (new  MovesPredictor().checkAngles(new MovesPredictor().fixAngle(gameState.getPlayerAngle()),new MovesPredictor().horizontal_xLineAngle(gameState.getPlayerLocation(),laserLocation))){
+            robot.keyPress(KeyEvent.VK_SPACE);
+            robot.keyRelease(KeyEvent.VK_SPACE);
+          if (new MovesPredictor().fixAngle(gameState.getPlayerAngle())> new MovesPredictor().horizontal_xLineAngle(gameState.getPlayerLocation(),laserLocation))
+            robot.keyPress(KeyEvent.VK_A);
+            else
+              robot.keyPress(KeyEvent.VK_D);
+            System.out.println(new  MovesPredictor().checkAngles(new MovesPredictor().fixAngle(gameState.getPlayerAngle()),new MovesPredictor().horizontal_xLineAngle(gameState.getPlayerLocation(),laserLocation)));
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println(new MovesPredictor().fixAngle(gameState.getPlayerAngle()) +"   |   "+new MovesPredictor().horizontal_xLineAngle(gameState.getPlayerLocation(),laserLocation));
+        }
+        robot.keyRelease(KeyEvent.VK_A);
+        robot.keyRelease(KeyEvent.VK_D);
+        robot.keyPress(KeyEvent.VK_W);
+        robot.keyPress(KeyEvent.VK_SPACE);
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        robot.keyRelease(KeyEvent.VK_W);
+
 
     }
 

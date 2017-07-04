@@ -68,22 +68,38 @@ public class MovesPredictor {
 
     public double fixAngle(double angle) {
 
-        angle = (angle < 0) ? -1 * (((-1) * angle) % 360) : angle % 360;
+        angle = (angle < 0) ? -1 * (((-1) * angle) % 360)+360 : angle % 360;
 
 
         //inastroid game we consider the third  is the first
-        if (angle > 0 && angle < 90)
+        if (angle >= 0 && angle < 90)
             angle += 180;
-        else if (angle > 90 && angle < 180)
+        else if (angle >= 90 && angle < 180)
             angle += 180;
 
-        else if (angle > 180 && angle < 270)
+        else if (angle >= 180 && angle < 270)
             angle -= 180;
 
-        else if (angle > 270 && angle < 360)
+        else if (angle >= 270 && angle < 360)
             angle -= 180;
 
-        return angle;
 
+
+            return angle;
+
+
+    }
+
+
+
+
+    public boolean checkAngles(double fstAngle , double secAngle){
+        if (fstAngle>secAngle && ((fstAngle-secAngle)<15 ||360-fstAngle+secAngle<15))
+            return false;
+
+        else if (secAngle>fstAngle&& ((secAngle-fstAngle)<15 ||360-secAngle+fstAngle<15))
+            return false;
+
+        return true;
     }
 }
