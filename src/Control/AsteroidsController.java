@@ -77,7 +77,7 @@ public class AsteroidsController implements OnLaserDetectionListener, OnFramePro
     @Override
     public void onDetection(Point point) {
         unifyResolution(point);
-        alterKeyCombination(point, gameState.getPlayerLocation(),gameState.getPlayerAngle());
+        alterKeyCombination(point);
     }
 
     private String getGameBin()
@@ -119,15 +119,14 @@ public class AsteroidsController implements OnLaserDetectionListener, OnFramePro
      * this function figures out the suitable key combinations to make the spaceship reach its location
      *
      * @param laserLocation
-     * @param playerLocation
      */
-    private void alterKeyCombination(Point laserLocation, Point playerLocation , double angel)
+    private void alterKeyCombination(Point laserLocation)
     {
         //tips:
         //  try not to create new instances only if needed
         //  this function will be called a lot and may cause memory leak on linux
         //  don't delete comments
-        System.out.println(playerLocation.x + " | " + playerLocation.y);
+        System.out.println(gameState.getPlayerLocation().x + " | " + gameState.getPlayerLocation().y + ", " + gameState.getPlayerAngle());
     }
 
     @Override
