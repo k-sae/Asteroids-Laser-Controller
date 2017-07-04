@@ -47,7 +47,7 @@ public class AsteroidsController implements OnLaserDetectionListener, OnFramePro
                 public void run() {
 
                     while (true) {
-                     //   robot.keyPress(KeyEvent.VK_W);
+                        robot.keyPress(KeyEvent.VK_W);
                         robot.keyPress(KeyEvent.VK_SPACE);
                         try {
                             sleep(600);
@@ -55,7 +55,7 @@ public class AsteroidsController implements OnLaserDetectionListener, OnFramePro
                             e.printStackTrace();
                         }
                         robot.keyRelease(KeyEvent.VK_SPACE);
-                       // robot.keyRelease(KeyEvent.VK_W);
+                        robot.keyRelease(KeyEvent.VK_W);
 
                     }
                 }
