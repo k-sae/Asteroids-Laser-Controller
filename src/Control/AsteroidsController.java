@@ -148,21 +148,19 @@ public class AsteroidsController implements OnLaserDetectionListener, OnFramePro
         //  try not to create new instances only if needed
         //  this function will be called a lot and may cause memory leak on linux
         //  don't delete comments
-      //  System.out.println(this.movesPredictor.horizontal_xLineAngle(gameState.getPlayerLocation(),laserLocation)+"  |   " +this.movesPredictor.lengthBetween2Points(gameState.getPlayerLocation(),laserLocation));
+          //  System.out.println(this.movesPredictor.horizontal_xLineAngle(gameState.getPlayerLocation(),laserLocation)+"  |   " +this.movesPredictor.fixAngle(gameState.getPlayerAngle()) );
         while (new  MovesPredictor().checkAngles(this.movesPredictor.fixAngle(gameState.getPlayerAngle()),this.movesPredictor.horizontal_xLineAngle(gameState.getPlayerLocation(),laserLocation))){
           //  robot.keyPress(KeyEvent.VK_SPACE);
           //  robot.keyRelease(KeyEvent.VK_SPACE);
-          if (this.movesPredictor.fixAngle(gameState.getPlayerAngle())> this.movesPredictor.horizontal_xLineAngle(gameState.getPlayerLocation(),laserLocation))
+          if (this.movesPredictor.fixAngle(gameState.getPlayerAngle())<    this.movesPredictor.horizontal_xLineAngle(gameState.getPlayerLocation(),laserLocation))
             robot.keyPress(KeyEvent.VK_A);
             else
               robot.keyPress(KeyEvent.VK_D);
-            System.out.println(new  MovesPredictor().checkAngles(this.movesPredictor.fixAngle(gameState.getPlayerAngle()),this.movesPredictor.horizontal_xLineAngle(gameState.getPlayerLocation(),laserLocation)));
             try {
                 Thread.sleep(10);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            System.out.println(this.movesPredictor.fixAngle(gameState.getPlayerAngle()) +"   |   "+this.movesPredictor.horizontal_xLineAngle(gameState.getPlayerLocation(),laserLocation));
         }
         robot.keyRelease(KeyEvent.VK_A);
         robot.keyRelease(KeyEvent.VK_D);
