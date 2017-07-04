@@ -43,21 +43,6 @@ public class AsteroidsController implements OnLaserDetectionListener, OnFramePro
 
         try {
             robot = new Robot();
-            new Thread(() -> {
-                robot.delay(10000);
-                while (true) {
-//                    robot.keyPress(KeyEvent.VK_W);
-//                    robot.keyPress(KeyEvent.VK_SPACE);
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-//                        robot.keyRelease(KeyEvent.VK_SPACE);
-//                        robot.keyRelease(KeyEvent.VK_W);
-
-                }
-            }).start();
         } catch (AWTException e) {
             e.printStackTrace();
         }
@@ -124,8 +109,6 @@ public class AsteroidsController implements OnLaserDetectionListener, OnFramePro
      */
     private void AnalyzeGameStates(String line)
     {
-        //implement this function
-       // System.out.println(line);
         gameState.parse(line);
         //pseudo code
         // if game type = menu
@@ -137,6 +120,10 @@ public class AsteroidsController implements OnLaserDetectionListener, OnFramePro
 
     }
 
+    /**
+     * manage the difference between game resolution
+     * @param point
+     */
     private void unifyResolution(Point point)
     {
         point.x = point.x * screenCameraRatio.x - screenCoordinates.x/2;
@@ -150,40 +137,32 @@ public class AsteroidsController implements OnLaserDetectionListener, OnFramePro
      *
      * @param laserLocation
      */
-    private void alterKeyCombination(Point laserLocation)
-    {
+    private void alterKeyCombination(Point laserLocation) {
         //tips:
-//        //  try not to create new instances only if needed
-//        //  this function will be called a lot and may cause memory leak on linux
-//        //  don't delete comments
-//          //  System.out.println(this.movesPredictor.horizontal_xLineAngle(gameState.getPlayerLocation(),laserLocation)+"  |   " +this.movesPredictor.fixAngle(gameState.getPlayerAngle()) );
-        if (MovesPredictor.checkAngles(this.movesPredictor.fixAngle(gameState.getPlayerAngle() -180 ),movesPredictor.horizontal_xLineAngle(gameState.getPlayerLocation(),laserLocation))){
-          //  robot.keyPress(KeyEvent.VK_SPACE);
-          //  robot.keyRelease(KeyEvent.VK_SPACE);
+        //  try not to create new instances only if needed
+        //  this function will be called a lot and may cause memory leak on linux
+        //  don't delete comments
+        if (MovesPredictor.checkAngles(this.movesPredictor.fixAngle(gameState.getPlayerAngle() - 180)
+                , movesPredictor.horizontal_xLineAngle(gameState.getPlayerLocation(),
+                        laserLocation))) {
             robot.keyPress(KeyEvent.VK_W);
             robot.keyPress(KeyEvent.VK_SPACE);
-          if (movesPredictor.fixAngle(gameState.getPlayerAngle() -180)< movesPredictor.horizontal_xLineAngle(gameState.getPlayerLocation(),laserLocation))
-            robot.keyPress(KeyEvent.VK_A);
+            if (movesPredictor.fixAngle(gameState.getPlayerAngle() - 180) < movesPredictor.horizontal_xLineAngle(gameState.getPlayerLocation(), laserLocation))
+                robot.keyPress(KeyEvent.VK_A);
             else
-              robot.keyPress(KeyEvent.VK_D);
+                robot.keyPress(KeyEvent.VK_D);
             keysReleaser.extend();
-        }
-        else
-        {
+        } else {
             robot.keyRelease(KeyEvent.VK_A);
             robot.keyRelease(KeyEvent.VK_D);
         }
-//        robot.keyPress(KeyEvent.VK_W);
-//        robot.keyPress(KeyEvent.VK_SPACE);
-//        try {
-//            Thread.sleep(100);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//        robot.keyRelease(KeyEvent.VK_W);
 
     }
 
+    /**
+     * detect the coordinates of the first frame then remove the listener as it will not be needed any more
+     * @param frame
+     */
     @Override
     public void onFinish(Mat frame) {
         if (frame.height() != 0)
