@@ -102,4 +102,17 @@ public class MovesPredictor {
 
         return true;
     }
+
+
+    public  boolean checkRoutateDiriction(double fstAngle , double secAngle){
+
+
+
+        return true;
+    }
+
+
+
+
+
 }
