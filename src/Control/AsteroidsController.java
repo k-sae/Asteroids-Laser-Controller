@@ -24,6 +24,7 @@ public class AsteroidsController implements OnLaserDetectionListener, OnFramePro
     private Robot robot;
     private GameState gameState;
     private Point laserLocation;
+    private MovesPredictor movesPredictor;
 
     //we r putting assumption that the game wil be full screen on our laptops for now
     //change it later
@@ -34,12 +35,31 @@ public class AsteroidsController implements OnLaserDetectionListener, OnFramePro
         this.laserDetector = laserDetector;
         laserDetector.setOnFrameProcessedListeners(this);
         gameState = new GameState();
+        this.movesPredictor=new MovesPredictor();
         //TODO #later
         //          any one find the most suitable way to get game coordinates
         screenCoordinates = new Point(1366,768);
         screenCameraRatio = new Point(0,0);
         try {
             robot = new Robot();
+            new Thread()
+            {
+                public void run() {
+
+                    while (true) {
+                        robot.keyPress(KeyEvent.VK_W);
+                        robot.keyPress(KeyEvent.VK_SPACE);
+                        try {
+                            sleep(600);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        robot.keyRelease(KeyEvent.VK_SPACE);
+                        robot.keyRelease(KeyEvent.VK_W);
+
+                    }
+                }
+            }.start();
         } catch (AWTException e) {
             e.printStackTrace();
         }
@@ -128,34 +148,32 @@ public class AsteroidsController implements OnLaserDetectionListener, OnFramePro
         //  try not to create new instances only if needed
         //  this function will be called a lot and may cause memory leak on linux
         //  don't delete comments
-
-      //  System.out.println(gameState.getPlayerLocation().x + " | " + gameState.getPlayerLocation().y + ", " + gameState.getPlayerAngle());
-      //  System.out.println(new MovesPredictor().horizontal_xLineAngle(gameState.getPlayerLocation(),laserLocation)+"  |   " +new MovesPredictor().lengthBetween2Points(gameState.getPlayerLocation(),laserLocation));
-        while (new  MovesPredictor().checkAngles(new MovesPredictor().fixAngle(gameState.getPlayerAngle()),new MovesPredictor().horizontal_xLineAngle(gameState.getPlayerLocation(),laserLocation))){
-            robot.keyPress(KeyEvent.VK_SPACE);
-            robot.keyRelease(KeyEvent.VK_SPACE);
-          if (new MovesPredictor().fixAngle(gameState.getPlayerAngle())> new MovesPredictor().horizontal_xLineAngle(gameState.getPlayerLocation(),laserLocation))
+      //  System.out.println(this.movesPredictor.horizontal_xLineAngle(gameState.getPlayerLocation(),laserLocation)+"  |   " +this.movesPredictor.lengthBetween2Points(gameState.getPlayerLocation(),laserLocation));
+        while (new  MovesPredictor().checkAngles(this.movesPredictor.fixAngle(gameState.getPlayerAngle()),this.movesPredictor.horizontal_xLineAngle(gameState.getPlayerLocation(),laserLocation))){
+          //  robot.keyPress(KeyEvent.VK_SPACE);
+          //  robot.keyRelease(KeyEvent.VK_SPACE);
+          if (this.movesPredictor.fixAngle(gameState.getPlayerAngle())> this.movesPredictor.horizontal_xLineAngle(gameState.getPlayerLocation(),laserLocation))
             robot.keyPress(KeyEvent.VK_A);
             else
               robot.keyPress(KeyEvent.VK_D);
-            System.out.println(new  MovesPredictor().checkAngles(new MovesPredictor().fixAngle(gameState.getPlayerAngle()),new MovesPredictor().horizontal_xLineAngle(gameState.getPlayerLocation(),laserLocation)));
+            System.out.println(new  MovesPredictor().checkAngles(this.movesPredictor.fixAngle(gameState.getPlayerAngle()),this.movesPredictor.horizontal_xLineAngle(gameState.getPlayerLocation(),laserLocation)));
             try {
                 Thread.sleep(10);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            System.out.println(new MovesPredictor().fixAngle(gameState.getPlayerAngle()) +"   |   "+new MovesPredictor().horizontal_xLineAngle(gameState.getPlayerLocation(),laserLocation));
+            System.out.println(this.movesPredictor.fixAngle(gameState.getPlayerAngle()) +"   |   "+this.movesPredictor.horizontal_xLineAngle(gameState.getPlayerLocation(),laserLocation));
         }
         robot.keyRelease(KeyEvent.VK_A);
         robot.keyRelease(KeyEvent.VK_D);
-        robot.keyPress(KeyEvent.VK_W);
-        robot.keyPress(KeyEvent.VK_SPACE);
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        robot.keyRelease(KeyEvent.VK_W);
+//        robot.keyPress(KeyEvent.VK_W);
+//        robot.keyPress(KeyEvent.VK_SPACE);
+//        try {
+//            Thread.sleep(100);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//        robot.keyRelease(KeyEvent.VK_W);
 
 
     }
