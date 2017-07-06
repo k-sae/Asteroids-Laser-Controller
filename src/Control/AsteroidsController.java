@@ -145,18 +145,18 @@ public class AsteroidsController implements OnLaserDetectionListener, OnFramePro
         if (MovesPredictor.checkAngles(this.movesPredictor.fixAngle(gameState.getPlayerAngle() - 180)
                 , movesPredictor.horizontal_xLineAngle(gameState.getPlayerLocation(),
                         laserLocation))) {
-            robot.keyPress(KeyEvent.VK_W);
-            robot.keyPress(KeyEvent.VK_SPACE);
             if (movesPredictor.fixAngle(gameState.getPlayerAngle() - 180) < movesPredictor.horizontal_xLineAngle(gameState.getPlayerLocation(), laserLocation))
                 robot.keyPress(KeyEvent.VK_A);
             else
                 robot.keyPress(KeyEvent.VK_D);
-            keysReleaser.extend();
+
         } else {
             robot.keyRelease(KeyEvent.VK_A);
             robot.keyRelease(KeyEvent.VK_D);
         }
-
+        robot.keyPress(KeyEvent.VK_W);
+        robot.keyPress(KeyEvent.VK_SPACE);
+        keysReleaser.extend();
     }
 
     /**

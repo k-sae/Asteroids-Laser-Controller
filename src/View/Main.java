@@ -41,7 +41,9 @@ public class Main extends Application implements OnFrameProcessedListener, OnMas
     public void start(Stage primaryStage) throws Exception {
         BorderPane root = new BorderPane();
         frame = new ImageView();
+        mask = new ImageView();
         root.setLeft(frame);
+        root.setCenter(mask);
         primaryStage.setTitle("Capture Color");
         primaryStage.setScene(new Scene(root, 900, 400));
         startLaserDetection();
@@ -88,6 +90,8 @@ public class Main extends Application implements OnFrameProcessedListener, OnMas
 
     public void onFinishMask(Mat frame) {
         //For Debugging
+        updateImageView(this.mask, frame);
+
         matBufferedSaver.addObject(frame);
     }
 
