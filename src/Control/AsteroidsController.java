@@ -150,10 +150,15 @@ public class AsteroidsController implements OnLaserDetectionListener, OnFramePro
         if (MovesPredictor.checkAngles(this.movesPredictor.fixAngle(gameState.getPlayerAngle() - 180)
                 , movesPredictor.horizontal_xLineAngle(gameState.getPlayerLocation(),
                         laserLocation))) {
-            if (movesPredictor.fixAngle(gameState.getPlayerAngle() - 180) < movesPredictor.horizontal_xLineAngle(gameState.getPlayerLocation(), laserLocation))
-                robot.keyPress(KeyEvent.VK_A);
+            System.out.println(movesPredictor.fixAngle(gameState.getPlayerAngle() - 180) + "   "+movesPredictor.horizontal_xLineAngle(gameState.getPlayerLocation(), laserLocation));
+            if (checkDirection(movesPredictor.fixAngle(gameState.getPlayerAngle() - 180),movesPredictor.horizontal_xLineAngle(gameState.getPlayerLocation(), laserLocation)) )
+               robot.keyPress(KeyEvent.VK_A);
+
             else
-                robot.keyPress(KeyEvent.VK_D);
+            robot.keyPress(KeyEvent.VK_D);
+
+
+
 
         } else {
             robot.keyRelease(KeyEvent.VK_A);
@@ -196,4 +201,23 @@ public class AsteroidsController implements OnLaserDetectionListener, OnFramePro
         point.y =  screenCoordinates.y /2 -  point.y;
 
     }
+
+private boolean checkDirection(double currentAngle , double targetAngle){
+    double left;
+    double right;
+    if (targetAngle>currentAngle){
+        left = targetAngle-currentAngle;
+        right = currentAngle+(360-targetAngle);
+        if (left<right)
+            return true;
+    }
+    else {
+        left=(360-currentAngle)+targetAngle;
+        right=currentAngle-targetAngle;
+        if(left<right)
+            return true;
+    }
+return false;
+}
+
 }
