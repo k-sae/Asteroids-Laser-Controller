@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Asteroids-Laser-Controller:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Asteroids_Laser_Controller_jar</output-path>
+    <root id="archive" name="Asteroids-Laser-Controller.jar">
+      <element id="module-output" name="Asteroids-Laser-Controller" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/libs/opencv-320.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
