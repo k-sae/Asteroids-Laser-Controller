@@ -3,6 +3,9 @@ package Control;
 import Control.LaserDetector.LaserDetector;
 import Control.LaserDetector.OnFrameProcessedListener;
 import Control.LaserDetector.OnLaserDetectionListener;
+import Control.MouseUtils.Location;
+import Control.MouseUtils.MouseUtils;
+import Control.MouseUtils.OnMouseMoveListener;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 
@@ -16,14 +19,14 @@ import java.util.ArrayList;
 /**
  * Created by kareem on 7/2/17.
  */
-public class AsteroidsController implements OnLaserDetectionListener, OnFrameProcessedListener {
+public class AsteroidsController implements OnLaserDetectionListener, OnFrameProcessedListener, OnMouseMoveListener {
 
     //WARNING!!!
     //this class working with 2 threads concurrently beside the Ui thread So make sure to Take Care of every interact
     private LaserDetector laserDetector;
     private Robot robot;
     private GameState gameState;
-    private Point laserLocation;
+    private Point mouseLocation;
     private MovesPredictor movesPredictor;
     private KeysReleaser keysReleaser;
     //we r putting assumption that the game wil be full screen on our laptops for now
@@ -171,5 +174,24 @@ public class AsteroidsController implements OnLaserDetectionListener, OnFramePro
             screenCameraRatio.y = screenCoordinates.y / frame.height();
             laserDetector.removeOnFrameProcessedListeners(this);
         }
+    }
+    public void addMouseController(MouseUtils mouseUtils)
+    {
+        mouseUtils.setOnMouseMoveListeners(this);
+        mouseLocation = new Point();
+    }
+
+    @Override
+    public void onMove(Location mouseLocation) {
+       this.mouseLocation.x = mouseLocation.getX();
+       this.mouseLocation.y = mouseLocation.getY();
+        leftTopToXY(this.mouseLocation);
+       alterKeyCombination( this.mouseLocation);
+    }
+    public void leftTopToXY(Point point)
+    {
+        point.x = point.x - screenCoordinates.x/2;
+        point.y =  screenCoordinates.y /2 -  point.y;
+
     }
 }
