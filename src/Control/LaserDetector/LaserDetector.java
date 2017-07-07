@@ -89,10 +89,12 @@ public class LaserDetector {
         if (matOfPoints.size() > 0) {
 
             float[] radius = new float[1];
+
             Point[] matOfPoint = matOfPoints.get(maxPoint(matOfPoints)).toArray();
             Imgproc.minEnclosingCircle(new MatOfPoint2f(matOfPoint), laserCenter,radius);
             //Trigger Listener up here
             Imgproc.circle(frame, laserCenter, 7, new Scalar(255, 0, 0), 2);
+            Imgproc.circle(mask, laserCenter, 7, new Scalar(255, 0, 0), 2);
             triggerLaserDetectionFrame(laserCenter);
 
         }

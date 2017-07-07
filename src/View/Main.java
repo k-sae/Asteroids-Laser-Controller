@@ -4,13 +4,17 @@ import Control.AsteroidsController;
 import Control.LaserDetector.LaserDetector;
 import Control.LaserDetector.OnFrameProcessedListener;
 import Control.LaserDetector.OnMaskProcessedListener;
+import Control.MouseUtils.MouseUtils;
 import Control.MovesPredictor;
 
 import Model.Saver;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import org.opencv.core.*;
@@ -41,11 +45,13 @@ public class Main extends Application implements OnFrameProcessedListener, OnMas
     public void start(Stage primaryStage) throws Exception {
         BorderPane root = new BorderPane();
         frame = new ImageView();
+        mask = new ImageView();
         root.setLeft(frame);
+        root.setRight(mask);
         primaryStage.setTitle("Capture Color");
         primaryStage.setScene(new Scene(root, 900, 400));
         startLaserDetection();
-        startGameSync();
+        startGameSync(root);
         matBufferedSaver = new Saver<Mat>(){
             @Override
             protected void save(Mat item, int num) {
@@ -88,12 +94,22 @@ public class Main extends Application implements OnFrameProcessedListener, OnMas
 
     public void onFinishMask(Mat frame) {
         //For Debugging
-        matBufferedSaver.addObject(frame);
+        updateImageView(this.mask, frame);
+
+//        matBufferedSaver.addObject(frame);
     }
 
-    private void startGameSync()
+    private void startGameSync(BorderPane borderPane)
     {
         AsteroidsController asteroidsController = new AsteroidsController(laserDetector);
         asteroidsController.start();
+        Button button = new Button("Use Mouse");
+        button.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                asteroidsController.addMouseController(new MouseUtils());
+            }
+        });
+        borderPane.setCenter(button);
     }
 }
