@@ -35,16 +35,16 @@ public class AsteroidsController implements OnLaserDetectionListener, OnFramePro
     //change it later
     private Point screenCoordinates;
     private Point screenCameraRatio;
-    public  AsteroidsController(LaserDetector laserDetector)
-    {
+
+    public AsteroidsController(LaserDetector laserDetector) {
         this.laserDetector = laserDetector;
         laserDetector.setOnFrameProcessedListeners(this);
         gameState = new GameState();
-        this.movesPredictor=new MovesPredictor();
+        this.movesPredictor = new MovesPredictor();
         //TODO #later
         //          any one find the most suitable way to get game coordinates
-        screenCoordinates = new Point(1366,768);
-        screenCameraRatio = new Point(0,0);
+        screenCoordinates = new Point(1366, 768);
+        screenCameraRatio = new Point(0, 0);
 
         try {
             robot = new Robot();
@@ -63,35 +63,33 @@ public class AsteroidsController implements OnLaserDetectionListener, OnFramePro
         keysReleaser.start();
     }
 
-    public void start()
-    {
+    public void start() {
         laserDetector.setOnLaserDetectionListeners(this);
         startGameStream();
     }
 
-     private void startGameStream()
-     {
-         new Thread(new Runnable() {
-             @Override
-             public void run() {
-         ArrayList<String> params = new ArrayList<>(1);
-         params.add(getGameBin());
-         ProcessBuilder processBuilder = new ProcessBuilder(params);
-         processBuilder.redirectErrorStream(true); // for some reason it will not work without it :0
-         try {
-             Process process = processBuilder.start();
-             BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream()));
-             String line;
-             while ((line = input.readLine()) != null) {
-                AnalyzeGameStates(line);
-             }
-         } catch (IOException e) {
-             e.printStackTrace();
-         }
+    private void startGameStream() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ArrayList<String> params = new ArrayList<>(1);
+                params.add(getGameBin());
+                ProcessBuilder processBuilder = new ProcessBuilder(params);
+                processBuilder.redirectErrorStream(true); // for some reason it will not work without it :0
+                try {
+                    Process process = processBuilder.start();
+                    BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                    String line;
+                    while ((line = input.readLine()) != null) {
+                        AnalyzeGameStates(line);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
-             }
-         }).start();
-     }
+            }
+        }).start();
+    }
 
     @Override
     public void onDetection(Point point) {
@@ -99,21 +97,21 @@ public class AsteroidsController implements OnLaserDetectionListener, OnFramePro
         alterKeyCombination(point);
     }
 
-    private String getGameBin()
-    {
+    private String getGameBin() {
         String s = System.getProperty("os.name").toLowerCase();
         if (s.contains("lin")) return "gameBin/linux/Asteroids";
         else return "gameBin/win/Asteroids.exe";
     }
     // TODO #belal #1
     //  make sure the wait between key events so game be able to capture keys
+
     /**
      * this function reads the data from game
      * u will have to give commands according to game states
+     *
      * @param line full asteroid game state in one line
      */
-    private void AnalyzeGameStates(String line)
-    {
+    private void AnalyzeGameStates(String line) {
         gameState.parse(line);
         //pseudo code
         // if game type = menu
@@ -127,12 +125,12 @@ public class AsteroidsController implements OnLaserDetectionListener, OnFramePro
 
     /**
      * manage the difference between game resolution
+     *
      * @param point
      */
-    private void unifyResolution(Point point)
-    {
-        point.x = point.x * screenCameraRatio.x - screenCoordinates.x/2;
-        point.y =  screenCoordinates.y /2 -  point.y * screenCameraRatio.y;
+    private void unifyResolution(Point point) {
+        point.x = point.x * screenCameraRatio.x - screenCoordinates.x / 2;
+        point.y = screenCoordinates.y / 2 - point.y * screenCameraRatio.y;
     }
 
     //TODO #thirdMember
@@ -150,16 +148,11 @@ public class AsteroidsController implements OnLaserDetectionListener, OnFramePro
         if (MovesPredictor.checkAngles(this.movesPredictor.fixAngle(gameState.getPlayerAngle() - 180)
                 , movesPredictor.horizontal_xLineAngle(gameState.getPlayerLocation(),
                         laserLocation))) {
-            System.out.println(movesPredictor.fixAngle(gameState.getPlayerAngle() - 180) + "   "+movesPredictor.horizontal_xLineAngle(gameState.getPlayerLocation(), laserLocation));
-            if (checkDirection(movesPredictor.fixAngle(gameState.getPlayerAngle() - 180),movesPredictor.horizontal_xLineAngle(gameState.getPlayerLocation(), laserLocation)) )
-               robot.keyPress(KeyEvent.VK_A);
+            if (checkDirection(movesPredictor.fixAngle(gameState.getPlayerAngle() - 180), movesPredictor.horizontal_xLineAngle(gameState.getPlayerLocation(), laserLocation)))
+                robot.keyPress(KeyEvent.VK_A);
 
             else
-            robot.keyPress(KeyEvent.VK_D);
-
-
-
-
+                robot.keyPress(KeyEvent.VK_D);
         } else {
             robot.keyRelease(KeyEvent.VK_A);
             robot.keyRelease(KeyEvent.VK_D);
@@ -171,53 +164,53 @@ public class AsteroidsController implements OnLaserDetectionListener, OnFramePro
 
     /**
      * detect the coordinates of the first frame then remove the listener as it will not be needed any more
+     *
      * @param frame
      */
     @Override
     public void onFinish(Mat frame) {
-        if (frame.height() != 0)
-        {
+        if (frame.height() != 0) {
             screenCameraRatio.x = screenCoordinates.x / frame.width();
             screenCameraRatio.y = screenCoordinates.y / frame.height();
             laserDetector.removeOnFrameProcessedListeners(this);
         }
     }
-    public void addMouseController(MouseUtils mouseUtils)
-    {
+
+    public void addMouseController(MouseUtils mouseUtils) {
         mouseUtils.setOnMouseMoveListeners(this);
+        laserDetector.removeOnFrameProcessedListeners(this);
         mouseLocation = new Point();
     }
 
     @Override
     public void onMove(Location mouseLocation) {
-       this.mouseLocation.x = mouseLocation.getX();
-       this.mouseLocation.y = mouseLocation.getY();
+        this.mouseLocation.x = mouseLocation.getX();
+        this.mouseLocation.y = mouseLocation.getY();
         leftTopToXY(this.mouseLocation);
-       alterKeyCombination( this.mouseLocation);
+        alterKeyCombination(this.mouseLocation);
     }
-    public void leftTopToXY(Point point)
-    {
-        point.x = point.x - screenCoordinates.x/2;
-        point.y =  screenCoordinates.y /2 -  point.y;
+
+    public void leftTopToXY(Point point) {
+        point.x = point.x - screenCoordinates.x / 2;
+        point.y = screenCoordinates.y / 2 - point.y;
 
     }
 
-private boolean checkDirection(double currentAngle , double targetAngle){
-    double left;
-    double right;
-    if (targetAngle>currentAngle){
-        left = targetAngle-currentAngle;
-        right = currentAngle+(360-targetAngle);
-        if (left<right)
-            return true;
+    private boolean checkDirection(double currentAngle, double targetAngle) {
+        double left;
+        double right;
+        if (targetAngle > currentAngle) {
+            left = targetAngle - currentAngle;
+            right = currentAngle + (360 - targetAngle);
+            if (left < right)
+                return true;
+        } else {
+            left = (360 - currentAngle) + targetAngle;
+            right = currentAngle - targetAngle;
+            if (left < right)
+                return true;
+        }
+        return false;
     }
-    else {
-        left=(360-currentAngle)+targetAngle;
-        right=currentAngle-targetAngle;
-        if(left<right)
-            return true;
-    }
-return false;
-}
 
 }

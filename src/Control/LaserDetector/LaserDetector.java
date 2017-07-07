@@ -122,6 +122,10 @@ public class LaserDetector {
     {
         onLaserDetectionListeners.add(onLaserDetectionListener);
     }
+    public void removeOnLaserDetectionListeners(OnLaserDetectionListener onLaserDetectionListener)
+    {
+        onLaserDetectionListeners.remove(onLaserDetectionListener);
+    }
     public void setOnFrameProcessedListeners(OnFrameProcessedListener onFrameProcessedListener)
     {
         onFrameProcessedListeners.add(onFrameProcessedListener);
